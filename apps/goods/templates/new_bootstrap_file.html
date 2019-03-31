@@ -1,0 +1,92 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <title>测试上传图片</title>
+    <link rel="stylesheet" href="{% static 'css/bootstrap-4-1-3.min.css' %}"
+          crossorigin="anonymous">
+    <link href="{% static 'css/fileinput.css' %}" media="all" rel="stylesheet" type="text/css"/>
+    <link rel="stylesheet" href="{% static 'css/fontawesome-v5-5-0-all.css' %}" crossorigin="anonymous">
+    <link href="{% static 'css/theme.css' %}" media="all" rel="stylesheet" type="text/css"/>
+    <script src="{% static 'js/jquery-3.3.1.min.js' %}" crossorigin="anonymous"></script>
+    <script src="{% static 'js/bootstrap.bundle.min.js' %}" crossorigin="anonymous"></script>
+    <script src="{% static 'js/plugins/piexif.js' %}" type="text/javascript"></script>
+    <script src="{% static 'js/plugins/sortable.js' %}" type="text/javascript"></script>
+    <script src="{% static 'js/fileinput.js' %}" type="text/javascript"></script>
+    <script src="{% static 'js/locales/zh.js' %}" type="text/javascript"></script>
+    <script src="{% static 'js/theme.js' %}" type="text/javascript"></script>
+    <script src="{% static 'js/explorer-fas/theme.js' %}" type="text/javascript"></script>
+</head>
+<body>
+<div>
+    {% csrf_token %}
+    <div id="insect">
+        {% for image in images %}
+            <img src="{{ image.image.url }}" alt="">
+        {% endfor %}
+    </div>
+    <input type="button" value="添加图片" id="image_insect_add">
+    <input type="submit" value="提交" id="btn_insect_add">
+    <div id="callback-index" hidden>
+
+    </div>
+</div>
+<script>
+    /*
+        基本思路
+        1、先展示以前该模型上传过的图片
+        2、点击上传按钮的时候，上传过的图片消失，上传图片input框消失，出现上传图片的模态框
+    */
+
+    $("#image_insect_add").click(function () {
+        var insect = $("#insect");
+        insect.empty();
+        $("#image_insect_add").css('display', 'none');
+        var element = '<input id="file-3" type="file" multiple class="file-loading">';
+        insect.append(element);
+        insect_file_input();
+    });
+
+    function insect_file_input() {
+        $("#file-3").fileinput({
+            uploadUrl: "{% url 'bs4' %}",
+            enctype: 'multipart/form-data',
+            theme: 'fas', // 主题
+            language: 'zh',  // 语言
+            showUpload: true,  // 上传
+            showCaption: true,
+            showCancel: true,  // 取消
+            // browseClass: "btn btn-primary btn-lg",
+            fileType: "image",
+            previewFileIcon: "<i class='glyphicon glyphicon-king'></i>",
+            uploadAsync: false,  // 同步上传
+            layoutTemplates: {
+                // actionDelete:'', //去除上传预览的缩略图中的删除图标
+                actionUpload: '',//去除上传预览缩略图中的上传图片；
+                actionZoom: ''   //去除上传预览缩略图中的查看详情预览的缩略图标。
+            },
+            overwriteInitial: true,
+            initialPreviewAsData: true,
+            initialPreview: [],
+            initialPreviewConfig: [
+                {caption: "test_001.jpg", size: 329892, width: "120px", url: "{$url}", key: 1},
+            ],
+            uploadExtraData: {
+                "csrfmiddlewaretoken": $("[name='csrfmiddlewaretoken']").val(),
+                "index": 123,
+            },
+        }).on("filebatchuploadsuccess", function (event, data) {
+            if (data.response) {
+                image_id = data.response.image_id;
+                $("#callback-index").text(image_id);
+            }
+        }).on('fileerror', function (event, data, msg) {  //一个文件上传失败
+            console.log('文件上传失败！' + msg);
+        });
+    }
+
+
+</script>
+</body>
+</html>

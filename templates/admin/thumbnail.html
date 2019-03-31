@@ -1,0 +1,24 @@
+{% if thumbnail %}
+    <img src="{{ thumbnail.url }}" alt="thumbnail" height="100px" id="now-image">
+{% endif %}
+<img src="" alt="" id="show-image" height="100px">
+<script>
+    $('#{{ image_name }}').change(function () {
+        $("#now-image").attr("style","display:none;");
+        var preview = document.querySelector('#show-image');
+        var file = document.querySelector('input[type=file]').files[0];
+        var reader = new FileReader();
+
+        reader.onloadend = function () {
+            preview.src = reader.result;
+        };
+
+        if (file) {
+            reader.readAsDataURL(file);
+        } else {
+            preview.src = "";
+        }
+    })
+
+</script>
+

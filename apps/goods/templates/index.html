@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>上传多张图片</title>
+    <link rel="stylesheet" href="../static/layui/css/layui.css" media="all">
+    <script src="../static/layui/layui.js" charset="utf-8"></script>
+</head>
+<body>
+<div>
+    <form id="post_form" method="post" action="" enctype="multipart/form-data">
+
+        {% csrf_token %}
+        {% for hidden in postForm.hidden_fields %}
+            {{ hidden }}
+        {% endfor %}
+
+        {% for field in postForm %}
+            {{ field }} <br/>
+        {% endfor %}
+
+        {{ formset.management_form }}
+        {% for form in formset %}
+            {{ form }}
+        {% endfor %}
+
+        <input type="submit" name="submit" value="Submit"/>
+    </form>
+</div>
+</body>
+</html>

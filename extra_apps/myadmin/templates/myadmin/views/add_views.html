@@ -1,0 +1,46 @@
+{% extends 'myadmin/base.html' %}
+{% block title %}
+    标题
+{% endblock %}
+{% block body %}
+    <div>
+        <form action="{{ add_url }}" method="post" class="layui-form">
+            {% csrf_token %}
+            {% for field in form %}
+                <div class="layui-form-item">
+                    <label class="layui-form-label">{{ field.label }}</label>
+                    {{ field }}
+                </div>
+            {% endfor %}
+            <div class="layui-form-item">
+                <label for="L_repass" class="layui-form-label">
+                </label>
+                <button class="layui-btn" lay-filter="add" lay-submit="">
+                    增加
+                </button>
+            </div>
+        </form>
+    </div>
+{% endblock %}
+{% block extra_js %}
+    <script>
+        layui.use(['form', 'layer'], function () {
+            $ = layui.jquery;
+            var form = layui.form;
+            // 验证提交内容
+            // 监听提交
+            form.on('submit(add)', function (data) {
+                console.log(form.data('name'));
+                //发异步，把数据提交给后台
+                layer.alert("增加成功", {icon: 6}, function () {
+                    // 获得frame索引
+                    var index = parent.layer.getFrameIndex(window.name);
+                    //关闭当前frame
+                    parent.layer.close(index);
+                });
+                return false;
+            });
+
+        });
+    </script>
+{% endblock %}
